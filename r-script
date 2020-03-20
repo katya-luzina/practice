@@ -1,0 +1,130 @@
+install.packages("quantmod")
+library(quantmod)
+install.packages("PerformanceAnalytics")
+library(PerformanceAnalytics)
+install.packages("PortfolioAnalytics")
+library(PortfolioAnalytics)
+install.packages("ROI")
+library(ROI)
+install.packages("ROI.plugin.glpk")
+library(ROI.plugin.glpk)
+install.packages("ROI.plugin.quadprog")
+library("ROI.plugin.quadprog")
+library(foreach)
+install.packages("stringi")
+library(stringi)
+install.packages("lubridate")
+library(lubridate)
+install.packages("rusquant", repos = "http://R-Forge.R-project.org", type = "source")
+library(rusquant)
+
+#'SU29008RMFS8','SU46020RMFS2','SU29007RMFS0'
+
+C<-0.3
+
+#по дням
+getSymbols(c('AFKS.ME','AFLT.ME','AGRO.ME','ALRS.ME','CBOM.ME','CHMF.ME','DSKY.ME','FEES.ME','GAZP.ME','GMKN.ME','HYDR.ME','IRAO.ME','LKOH.ME','MAGN.ME'
+             ,'MFON.ME','MGNT.ME','MOEX.ME','MTLR.ME','MTSS.ME','MVID.ME','NLMK.ME','NMTP.ME','NVTK.ME','PHOR.ME','PIKK.ME','PLZL.ME','POLY.ME','RNFT.ME','ROSN.ME',
+             'RSTI.ME','RTKM.ME','RUAL.ME','SBER.ME','SBERP.ME','SFIN.ME','SNGS.ME','SNGSP.ME'
+             ,'TATN.ME','TATNP.ME','TRMK.ME','TRNFP.ME','UPRO.ME','UWGN.ME','VTBR.ME','YNDX.ME','BZM18.NYM','GOLD','ESM18.CME'), src='yahoo',to='2018-02-09')
+
+#+доллар, нефть, офз
+getSymbols(c('USD000UTSTOM','SPFB.RTS'), src='Finam',to='2018-02-08')
+
+
+ticker<-cbind(AFKS.ME[,4],AFLT.ME[,4],AGRO.ME[,4],ALRS.ME[,4],CBOM.ME[,4],CHMF.ME[,4],DSKY.ME[,4],FEES.ME[,4],GAZP.ME[,4],GMKN.ME[,4],
+              HYDR.ME[,4],IRAO.ME[,4],LKOH.ME[,4],MAGN.ME[,4],MFON.ME[,4],MGNT.ME[,4],MOEX.ME[,4],MTLR.ME[,4],MTSS.ME[,4],MVID.ME[,4],NLMK.ME[,4],NMTP.ME[,4],
+              NVTK.ME[,4],PHOR.ME[,4],PIKK.ME[,4],PLZL.ME[,4],POLY.ME[,4],RNFT.ME[,4],ROSN.ME[,4],RSTI.ME[,4],RTKM.ME[,4],RUAL.ME[,4],SBER.ME[,4],SBERP.ME[,4],
+              SFIN.ME[,4],SNGS.ME[,4],SNGSP.ME[,4],TATN.ME[,4],TATNP.ME[,4],TRMK.ME[,4],TRNFP.ME[,4],UPRO.ME[,4],UWGN.ME[,4],VTBR.ME[,4],YNDX.ME[,4],BZM18.NYM[,4],
+              GOLD[,4],USD000UTSTOM[,4],SPFB.RTS[,4],ESM18.CME[,4])
+ticker[-nrow(ticker),]->ticker
+
+matrix(,nrow=50,ncol=50)->w
+for (i in 1:50)
+{
+  for (j in 1:50)
+  {
+    a<-merge(ticker[,i],ticker[,j])
+    na.omit(a)->a
+    a <-as.matrix(log(a))
+    a <-diff(a)
+    ifelse(nrow(a)>=100,a[nrow(a):(nrow(a)-99),]->a,a->a)
+    if (abs(cor(a)[1,2])>=C) cor(a)[1,2]->w[i,j]
+  }
+}
+
+w->cormat
+
+
+
+# #валюты
+# read.table("e:/corr.txt",na.strings=c("", "NA"),sep='\t')->a1
+# 
+# a1$V1<-NULL
+# 
+# a1[-1,]->a1
+# colnames(a1)<-NULL
+# rownames(a1)<-NULL
+# colnames(a1)<-c('BYNRUB_TOD', 'BYNRUB_TOM', 'CHFRUB_TOD', 'CHFRUB_TOM', 'CNY000000TOD', 'CNYRUB_TOM', 'EUR_RUB__TOD', 'EUR_RUB__TOM', 'EURRUB_SPT', 'EURUSD000TOD',
+#                 'EURUSD000TOM', 'GBPRUB_TOD', 'GBPRUB_TOM', 'HKDRUB_TOD', 'HKDRUB_TOM', 'KZT000000TOM', 'UAH000000TOM', 'USD000000TOD', 'USD000UTSTOM', 'USDRUB_SPT')
+# rownames(a1)<-c('BYNRUB_TOD', 'BYNRUB_TOM', 'CHFRUB_TOD', 'CHFRUB_TOM', 'CNY000000TOD', 'CNYRUB_TOM', 'EUR_RUB__TOD', 'EUR_RUB__TOM', 'EURRUB_SPT', 'EURUSD000TOD',
+#                 'EURUSD000TOM', 'GBPRUB_TOD', 'GBPRUB_TOM', 'HKDRUB_TOD', 'HKDRUB_TOM', 'KZT000000TOM', 'UAH000000TOM', 'USD000000TOD', 'USD000UTSTOM', 'USDRUB_SPT')
+# as.matrix(a1)->a1
+
+#cormat <- round(cor(q),2)
+rownames(cormat)<-NULL
+colnames(cormat)<-NULL
+rownames(cormat)<-c('AFKS','AFLT','AGRO','ALRS','CBOM','CHMF','DSKY','FEES','GAZP','GMKN','HYDR','IRAO','LKOH','MAGN'
+                    ,'MFON','MGNT','MOEX','MTLR','MTSS','MVID','NLMK','NMTP','NVTK','PHOR','PIKK','PLZL','POLY','RNFT','ROSN',
+                    'RSTI','RTKM','RUAL','SBER','SBERP','SFIN','SNGS','SNGSP'
+                    ,'TATN','TATNP','TRMK','TRNFP','UPRO','UWGN','VTBR','YNDX','BRENT','GOLD','USDRUB_TOM','RTS-FUT','S&P500-FUT(CME)')
+colnames(cormat)<-c('AFKS','AFLT','AGRO','ALRS','CBOM','CHMF','DSKY','FEES','GAZP','GMKN','HYDR','IRAO','LKOH','MAGN'
+                    ,'MFON','MGNT','MOEX','MTLR','MTSS','MVID','NLMK','NMTP','NVTK','PHOR','PIKK','PLZL','POLY','RNFT','ROSN',
+                    'RSTI','RTKM','RUAL','SBER','SBERP','SFIN','SNGS','SNGSP'
+                    ,'TATN','TATNP','TRMK','TRNFP','UPRO','UWGN','VTBR','YNDX','BRENT','GOLD','USDRUB_TOM','RTS-FUT','S&P500-FUT(CME)')
+head(cormat)
+
+as.data.frame(cormat)->cormat
+cormat$na_count <- apply(cormat, 1, function(x) sum(is.na(x)))
+cormat<-cormat[!(cormat$na_count>(nrow(cormat)-3)),]
+cormat<-cormat[,(colnames(cormat) %in% rownames(cormat))]
+as.matrix(cormat)->cormat
+
+library(reshape2)
+melted_cormat <- melt(cormat,na.rm = TRUE)
+head(melted_cormat)
+
+library(ggplot2)
+ggplot(data = melted_cormat, aes(x=Var1, y=Var2, fill=value)) + 
+  geom_tile()+
+  scale_fill_gradient2(low = "red", high = "green", mid = "white", 
+                       midpoint = 0, limit = c(-1,1), space = "Lab", 
+                       name="Correlation")+
+  theme(axis.text.x = element_text(angle = 90, vjust = 1, 
+                                   size = 13, hjust = 1))+
+  theme(axis.text.y = element_text( vjust = 1, 
+                                    size = 13, hjust = 1))
+
+library(igraph)
+Dis_mat <-as.matrix(1-cormat^2)
+G <-graph.adjacency(Dis_mat,mode=c("undirected"),weighted=TRUE)
+MST <-minimum.spanning.tree(G,algorithm="prim")
+Lay <-layout.kamada.kawai(MST)
+
+# V(MST)$color[1:2] <-rgb(0,128,0,255,max=255)
+# V(MST)$color[3:4] <-rgb(15,0,128,255,max=255)
+# V(MST)$color[5:7] <-rgb(192,192,192,255,max=255)
+# V(MST)$color[8:12] <-rgb(255,1,255,255,max=255)
+# V(MST)$color[13:14] <-rgb(192,192,192,255,max=255)
+# V(MST)$color[15:15] <-rgb(255,255,0,255,max=255)
+# V(MST)$color[16:17] <-rgb(255,1,255,255,max=255)
+# V(MST)$color[18:18] <-rgb(244, 229, 66,255,max=255)
+# V(MST)$color[19:19] <-rgb(204, 26, 53,255,max=255)
+# V(MST)$color[20:20] <-rgb(211, 124, 10,255,max=255)
+# V(MST)$color[23:23] <-rgb(83, 44, 137,255,max=255)
+
+# Plot MST
+plot(MST,layout=Lay,vertex.size=6,vertex.shape='circle', asp=FALSE,
+     vertex.label.cex=0.85, vertex.label.dist=0.35, vertex.label.degree=-pi/2,
+     vertex.label.color="black",vertex.color=rgb(246,246,253,255,max=255),
+     edge.width=0.5,edge.color=rgb(0,0,0,255,max=255))
