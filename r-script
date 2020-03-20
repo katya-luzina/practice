@@ -26,10 +26,10 @@ C<-0.3
 getSymbols(c('AFKS.ME','AFLT.ME','AGRO.ME','ALRS.ME','CBOM.ME','CHMF.ME','DSKY.ME','FEES.ME','GAZP.ME','GMKN.ME','HYDR.ME','IRAO.ME','LKOH.ME','MAGN.ME'
              ,'MFON.ME','MGNT.ME','MOEX.ME','MTLR.ME','MTSS.ME','MVID.ME','NLMK.ME','NMTP.ME','NVTK.ME','PHOR.ME','PIKK.ME','PLZL.ME','POLY.ME','RNFT.ME','ROSN.ME',
              'RSTI.ME','RTKM.ME','RUAL.ME','SBER.ME','SBERP.ME','SFIN.ME','SNGS.ME','SNGSP.ME'
-             ,'TATN.ME','TATNP.ME','TRMK.ME','TRNFP.ME','UPRO.ME','UWGN.ME','VTBR.ME','YNDX.ME','BZM18.NYM','GOLD','ESM18.CME'), src='yahoo',to='2018-02-09')
+             ,'TATN.ME','TATNP.ME','TRMK.ME','TRNFP.ME','UPRO.ME','UWGN.ME','VTBR.ME','YNDX.ME','BZM18.NYM','GOLD','ESM18.CME'), src='yahoo',to='2019-02-09')
 
 #+доллар, нефть, офз
-getSymbols(c('USD000UTSTOM','SPFB.RTS'), src='Finam',to='2018-02-08')
+getSymbols(c('USD000UTSTOM','SPFB.RTS'), src='Finam',to='2019-02-08')
 
 
 ticker<-cbind(AFKS.ME[,4],AFLT.ME[,4],AGRO.ME[,4],ALRS.ME[,4],CBOM.ME[,4],CHMF.ME[,4],DSKY.ME[,4],FEES.ME[,4],GAZP.ME[,4],GMKN.ME[,4],
